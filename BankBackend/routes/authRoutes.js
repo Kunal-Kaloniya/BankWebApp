@@ -2,11 +2,25 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
+import { Account } from "../models/account.model.js";
+import { isValidAccNum } from "../utils/checkDuplicate.js";
 
 const router = express.Router();
 
+
+// function to generate a token for the user verification
 const generateToken = (user) => {
     return jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+}
+
+
+// function to create an account number: datePart + randomPart
+const generateAccountNumber = () => {
+    const part1 = Date.now().toString().slice(-6);
+    const part2 = Math.floor(100000 + Math.random() * 900000).toString();
+    const accNumber = part1 + part2;
+
+    return `${accNumber.slice(0, 4)}-${accNumber.slice(4, 8)}-${accNumber.slice(8, 12)}`;
 }
 
 router.post('/register', async (req, res) => {
@@ -27,8 +41,15 @@ router.post('/register', async (req, res) => {
     await user.save();
 
     // Creating a unique bank account number
+    let accountNumber = generateAccountNumber();
+    while (await isValidAccNum(accountNumber)) {
+        accountNumber = generateAccountNumber();
+    }
 
-    res.status(201).json({ msg: "New user created successfully", user });
+    const account = new Account({accountHolder: user._id, accountNumber: accountNumber});
+    await account.save();
+
+    res.status(201).json({ msg: "New user created successfully", user, account });
 });
 
 router.post('/login', async (req, res) => {

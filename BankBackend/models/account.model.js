@@ -6,7 +6,7 @@ const accountSchema = new mongoose.Schema({
         ref: "User",
     },
     accountNumber: {
-        type: Number,
+        type: String,
         unique: true,
     },
     balance: {

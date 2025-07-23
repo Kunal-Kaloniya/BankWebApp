@@ -3,6 +3,8 @@ import "dotenv/config";
 
 import connectDB from "./database/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import accountRoutes from "./routes/accountRoutes.js";
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -12,6 +14,8 @@ connectDB()
     .then(() => {
 
         app.use('/', authRoutes);
+        app.use('/users', userRoutes);
+        app.use('/accounts', accountRoutes);
 
         app.get('/', (req, res) => {
             res.send({ msg: "Server is running!" });
