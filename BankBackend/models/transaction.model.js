@@ -1,8 +1,15 @@
 import mongoose from "mongoose";
 
 const transactionSchema = new mongoose.Schema({
-    accountId: {
+    from: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "Account",
+        default: null,
+    },
+    to: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Account",
+        default: null,
     },
     transactionType: {
         type: String,

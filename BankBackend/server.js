@@ -5,6 +5,7 @@ import connectDB from "./database/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import accountRoutes from "./routes/accountRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -16,6 +17,7 @@ connectDB()
         app.use('/', authRoutes);
         app.use('/users', userRoutes);
         app.use('/accounts', accountRoutes);
+        app.use('/admin', adminRoutes)
 
         app.get('/', (req, res) => {
             res.send({ msg: "Server is running!" });

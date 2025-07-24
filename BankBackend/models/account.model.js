@@ -13,6 +13,10 @@ const accountSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    isFrozen: {
+        type: Boolean,
+        default: false,
+    }
 }, { timestamps: true });
 
 export const Account = mongoose.model("Account", accountSchema);
