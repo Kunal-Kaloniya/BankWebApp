@@ -41,6 +41,8 @@ router.get('/:userId', async (req, res) => {
 router.get('/transactions/:accountId', async (req, res) => {
     const { accountId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(accountId)) return res.status(400).json({ msg: "Invalid Id" });
+
     try {
         const account = await Account.findById(accountId);
 
@@ -64,9 +66,8 @@ router.get('/transactions/:accountId', async (req, res) => {
 router.post('/withdraw', async (req, res) => {
     const { accountId, amount } = req.body;
 
-    if (amount <= 0 || !amount) {
-        return res.status(400).json({ msg: "Invalid amount." });
-    }
+    if (!mongoose.Types.ObjectId.isValid(accountId)) return res.status(400).json({ msg: "Invalid Id" });
+    if (amount <= 0 || !amount) return res.status(400).json({ msg: "Invalid amount." });
 
     try {
         const account = await Account.findById(accountId);
@@ -94,9 +95,8 @@ router.post('/withdraw', async (req, res) => {
 router.post('/deposit', async (req, res) => {
     const { accountId, amount } = req.body;
 
-    if (amount <= 0 || !amount) {
-        return res.status(400).json({ msg: "Invalid amount." });
-    }
+    if (!mongoose.Types.ObjectId.isValid(accountId)) return res.status(400).json({ msg: "Invalid Id" });
+    if (amount <= 0 || !amount) return res.status(400).json({ msg: "Invalid amount." });
 
     try {
         const account = await Account.findById(accountId);
@@ -119,6 +119,10 @@ router.post('/deposit', async (req, res) => {
 router.post('/transfer-money', async (req, res) => {
     const { senderId, receiverId, amount } = req.body;
 
+    if (!mongoose.Types.ObjectId.isValid(senderId) || !mongoose.Types.ObjectId.isValid(receiverId)) {
+        return res.status(400).json({ msg: "Invalid Id" });
+    }
+    
     if (amount <= 0) return res.status(500).json({ msg: "Invalid amount!" });
 
     const session = await mongoose.startSession();

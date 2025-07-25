@@ -29,6 +29,8 @@ router.post('/register', async (req, res) => {
         return res.status(500).json({ msg: "All fields are required" });
     }
 
+    if (password.length < 8) return res.status(400).json({ msg: "Password must be atleast 8 characters in length!" });
+
     const existingUser = await User.findOne({ email: email });
     if (existingUser) {
         return res.status(500).json({ msg: "User already exists" });
@@ -46,7 +48,7 @@ router.post('/register', async (req, res) => {
         accountNumber = generateAccountNumber();
     }
 
-    const account = new Account({accountHolder: user._id, accountNumber: accountNumber});
+    const account = new Account({ accountHolder: user._id, accountNumber: accountNumber });
     await account.save();
 
     res.status(201).json({ msg: "New user created successfully", user, account });
