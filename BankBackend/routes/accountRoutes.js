@@ -34,30 +34,30 @@ router.get('/:userId', async (req, res) => {
         const account = await Account.findOne({ accountHolder: userId });
         res.status(200).json(account);
     } catch (err) {
-        res.status(404).json({ msg: "Account Not Found" });
+        res.status(404).json({ message: "Account Not Found" });
     }
 });
 
 router.get('/transactions/:accountId', async (req, res) => {
     const { accountId } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(accountId)) return res.status(400).json({ msg: "Invalid Id" });
+    if (!mongoose.Types.ObjectId.isValid(accountId)) return res.status(400).json({ message: "Invalid Id" });
 
     try {
         const account = await Account.findById(accountId);
 
         if (!account) {
-            return res.status(404).json({ msg: "Account not found!" });
+            return res.status(404).json({ message: "Account not found!" });
         }
 
         const transactions = await Transaction.find({ $or: [{ from: accountId }, { to: accountId }] });
         if (!transactions) {
-            return res.status(500).json({ msg: "No withdrawls found." });
+            return res.status(500).json({ message: "No withdrawls found." });
         }
 
         res.status(200).json(transactions);
     } catch (err) {
-        res.status(500).json({ msg: "Error getting all the transactins" });
+        res.status(500).json({ message: "Error getting all the transactins" });
     }
 })
 
@@ -66,18 +66,18 @@ router.get('/transactions/:accountId', async (req, res) => {
 router.post('/withdraw', async (req, res) => {
     const { accountId, amount } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(accountId)) return res.status(400).json({ msg: "Invalid Id" });
-    if (amount <= 0 || !amount) return res.status(400).json({ msg: "Invalid amount." });
+    if (!mongoose.Types.ObjectId.isValid(accountId)) return res.status(400).json({ message: "Invalid Id" });
+    if (amount <= 0 || !amount) return res.status(400).json({ message: "Invalid amount." });
 
     try {
         const account = await Account.findById(accountId);
 
-        if (!account) return res.status(404).json({ msg: "Account Not Found!" });
-        if (account.isFrozen) return res.status(500).json({ msg: "Account is frozen!" });
+        if (!account) return res.status(404).json({ message: "Account Not Found!" });
+        if (account.isFrozen) return res.status(500).json({ message: "Account is frozen!" });
 
         if (account.balance < amount) {
             await createTransaction(accountId, null, "withdraw", amount, "failed");
-            return res.status(400).json({ msg: "Insufficient Balance!" });
+            return res.status(400).json({ message: "Insufficient Balance!" });
         }
 
         account.balance -= amount;
@@ -85,34 +85,34 @@ router.post('/withdraw', async (req, res) => {
 
         const newTransaction = await createTransaction(accountId, null, "withdraw", amount, "success");
 
-        res.status(201).json({ msg: "Amount successfully withdrawn", account, newTransaction });
+        res.status(201).json({ message: "Amount successfully withdrawn", account, newTransaction });
     } catch (err) {
         await createTransaction(accountId, null, "withdraw", amount, "failed");
-        res.status(500).json({ msg: "Withdrawal failed!" });
+        res.status(500).json({ message: "Withdrawal failed!" });
     }
 });
 
 router.post('/deposit', async (req, res) => {
     const { accountId, amount } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(accountId)) return res.status(400).json({ msg: "Invalid Id" });
-    if (amount <= 0 || !amount) return res.status(400).json({ msg: "Invalid amount." });
+    if (!mongoose.Types.ObjectId.isValid(accountId)) return res.status(400).json({ message: "Invalid Id" });
+    if (amount <= 0 || !amount) return res.status(400).json({ message: "Invalid amount." });
 
     try {
         const account = await Account.findById(accountId);
 
-        if (!account) return res.status(404).json({ msg: "Account not found!" });
-        if (account.isFrozen) return res.status(500).json({ msg: "Account is frozen!" });
+        if (!account) return res.status(404).json({ message: "Account not found!" });
+        if (account.isFrozen) return res.status(500).json({ message: "Account is frozen!" });
 
         account.balance += amount;
         await account.save();
 
         const newTransaction = await createTransaction(null, accountId, "deposit", amount, "success");
 
-        res.status(201).json({ msg: "Amount successfully deposited", account, newTransaction });
+        res.status(201).json({ message: "Amount successfully deposited", account, newTransaction });
     } catch (err) {
         await createTransaction(null, accountId, "deposit", amount, "failed");
-        res.status(500).json({ msg: "Deposit failed!" });
+        res.status(500).json({ message: "Deposit failed!" });
     }
 });
 
@@ -120,10 +120,10 @@ router.post('/transfer-money', async (req, res) => {
     const { senderId, receiverId, amount } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(senderId) || !mongoose.Types.ObjectId.isValid(receiverId)) {
-        return res.status(400).json({ msg: "Invalid Id" });
+        return res.status(400).json({ message: "Invalid Id" });
     }
     
-    if (amount <= 0) return res.status(500).json({ msg: "Invalid amount!" });
+    if (amount <= 0) return res.status(500).json({ message: "Invalid amount!" });
 
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -148,12 +148,12 @@ router.post('/transfer-money', async (req, res) => {
         await session.commitTransaction();
         session.endSession();
 
-        res.status(200).json({ msg: "Transfer successfull!" });
+        res.status(200).json({ message: "Transfer successfull!" });
 
     } catch (err) {
         await session.abortTransaction();
         session.endSession()
-        res.status(500).json({ msg: "Transfer failed", error: err.message });
+        res.status(500).json({ message: "Transfer failed", error: err.message });
     }
 })
 

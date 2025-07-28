@@ -26,14 +26,14 @@ const generateAccountNumber = () => {
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
-        return res.status(500).json({ msg: "All fields are required" });
+        return res.status(500).json({ message: "All fields are required" });
     }
 
-    if (password.length < 8) return res.status(400).json({ msg: "Password must be atleast 8 characters in length!" });
+    if (password.length < 8) return res.status(400).json({ message: "Password must be atleast 8 characters in length!" });
 
     const existingUser = await User.findOne({ email: email });
     if (existingUser) {
-        return res.status(500).json({ msg: "User already exists" });
+        return res.status(500).json({ message: "User already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -51,29 +51,29 @@ router.post('/register', async (req, res) => {
     const account = new Account({ accountHolder: user._id, accountNumber: accountNumber });
     await account.save();
 
-    res.status(201).json({ msg: "New user created successfully", user, account });
+    res.status(201).json({ message: "New user created successfully", user, account });
 });
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        return res.status(500).json({ msg: "All fields are required" });
+        return res.status(500).json({ message: "All fields are required" });
     }
 
     const user = await User.findOne({ email: email });
     if (!user) {
-        return res.status(404).json({ msg: "User not found" });
+        return res.status(404).json({ message: "User not found" });
     }
 
     const isUser = await bcrypt.compare(password, user.password);
     if (!isUser) {
-        return res.status(400).json({ msg: "Incorrect password" });
+        return res.status(400).json({ message: "Incorrect password" });
     }
 
     const token = generateToken(user);
 
-    res.status(201).json({ msg: "Logging in successfully", user, token });
+    res.status(201).json({ message: "Logging in successfully", user, token });
 });
 
 export default router;

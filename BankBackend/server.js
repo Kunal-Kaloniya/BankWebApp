@@ -1,7 +1,7 @@
 import express from "express";
 import "dotenv/config";
 import cors from "cors";
-import ExpressMongoSanitize from "express-mongo-sanitize";
+// import mongoSanitize from "express-mongo-sanitize";
 import rateLimit from "express-rate-limit";
 
 import connectDB from "./database/db.js";
@@ -24,7 +24,7 @@ app.use(cors({
     origin: "http://localhost:5173",
     credentials: true,
 }));
-app.use(ExpressMongoSanitize());
+// app.use(mongoSanitize());
 
 connectDB()
     .then(() => {
@@ -35,7 +35,7 @@ connectDB()
         app.use('/admin', adminRoutes)
 
         app.get('/', (req, res) => {
-            res.send({ msg: "Server is running!" });
+            res.send({ message: "Server is running!" });
         })
 
         app.listen(PORT, () => {
