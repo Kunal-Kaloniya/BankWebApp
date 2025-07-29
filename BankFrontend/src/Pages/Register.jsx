@@ -28,7 +28,7 @@ function Register() {
     }
 
     return (
-        <div className="w-full flex justify-center my-10">
+        <div className="w-full min-h-[60vh] flex items-center justify-center my-10">
             <div className="text-center">
                 <h1 className="text-3xl font-medium mb-5">Register</h1>
                 <form className="w-md min-h-10 px-5 py-5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-md flex flex-col" onSubmit={handleRegister}>

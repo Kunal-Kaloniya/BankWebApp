@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { AuthContext } from "../context/AuthContext.jsx";
 
 function Login() {
 
     const navigate = useNavigate();
 
+    const { login } = useContext(AuthContext);
     const [form, setForm] = useState({ email: "", password: "" });
     const [message, setMessage] = useState("");
 
@@ -18,7 +20,14 @@ function Login() {
 
         try {
             const response = await axios.post('http://localhost:3000/auth/login', form);
-            setMessage("Login successfull!");
+            login({
+                id: response.data.user._id,
+                username: response.data.user.username,
+                email: response.data.user.email,
+                role: response.data.user.role
+            });
+
+            setMessage(response.data.message);
             localStorage.setItem("token", response.data.token);
             setForm({ email: "", password: "" });
             navigate('/user/dashboard')
@@ -29,9 +38,9 @@ function Login() {
     }
 
     return (
-        <div className="w-full flex justify-center my-10">
+        <div className="w-full min-h-[60vh] flex items-center justify-center my-10">
             <div className="text-center">
-                <h1 className="text-3xl font-medium mb-5">Register</h1>
+                <h1 className="text-3xl font-medium mb-5">Login</h1>
                 <form className="w-md min-h-10 px-5 py-5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-md flex flex-col" onSubmit={handleLogin}>
 
                     <label htmlFor="email" className="text-left">E-mail: </label>

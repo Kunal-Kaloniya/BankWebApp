@@ -11,13 +11,14 @@ export function AuthProvider({ children }) {
         setUser(userData);
         setIsLogged(true);
         localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("isLogged", isLogged);
+        localStorage.setItem("isLogged", true);
     }
 
     const logout = () => {
         setUser(null);
         setIsLogged(false);
         localStorage.removeItem("user");
+        localStorage.removeItem("token");
         localStorage.removeItem("isLogged");
     }
 
