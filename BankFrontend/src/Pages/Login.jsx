@@ -24,7 +24,8 @@ function Login() {
                 id: response.data.user._id,
                 username: response.data.user.username,
                 email: response.data.user.email,
-                role: response.data.user.role
+                role: response.data.user.role,
+                createdAt: response.data.user.createdAt
             });
 
             setMessage(response.data.message);

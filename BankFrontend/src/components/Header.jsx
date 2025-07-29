@@ -27,13 +27,13 @@ function Header() {
                             <div className="flex gap-5">
                                 <Link
                                     to='/'
-                                    className="text-blue-600 dark:text-blue-500 focus:border-b-1 pb-1"
+                                    className="focus:text-blue-600 focus:dark:text-blue-500 focus:border-b-1 pb-1"
                                 >
                                     Home
                                 </Link>
                                 <Link
                                     to='/user/dashboard'
-                                    className="text-blue-600 dark:text-blue-500 focus:border-b-1 pb-1"
+                                    className="focus:text-blue-600 focus:dark:text-blue-500 focus:border-b-1 pb-1"
                                 >
                                     Dashboard
                                 </Link>

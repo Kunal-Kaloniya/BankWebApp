@@ -6,7 +6,7 @@ function Home() {
     const { isLogged } = useContext(AuthContext);
 
     return (
-        <div className="">
+        <div>
             <section className="flex flex-col items-center justify-center py-24 text-center px-4">
                 <h2 className="text-4xl font-bold mb-4">Banking Made Easy</h2>
                 <p className="text-lg max-w-xl mb-6">
