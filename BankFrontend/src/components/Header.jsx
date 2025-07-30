@@ -37,6 +37,12 @@ function Header() {
                                 >
                                     Dashboard
                                 </Link>
+                                <Link
+                                    to='/user/transaction'
+                                    className="focus:text-blue-600 focus:dark:text-blue-500 focus:border-b-1 pb-1"
+                                >
+                                    Transaction
+                                </Link>
                             </div>
 
                             <div className="flex items-center justify-between gap-2">

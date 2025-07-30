@@ -5,6 +5,7 @@ import Home from "./Pages/Home.jsx";
 import Register from "./Pages/Register.jsx";
 import Login from "./Pages/Login.jsx";
 import Dashboard from "./Pages/Dashboard.jsx";
+import Transaction from "./Pages/Transaction.jsx";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
 
             <Route element={<ProtectedRoute />}>
               <Route path="/user/dashboard" element={<Dashboard />} />
+              <Route path="/user/transaction" element={<Transaction />} />
             </Route>
           </Route>
         </Routes>

@@ -11,6 +11,14 @@ const transactionSchema = new mongoose.Schema({
         ref: "Account",
         default: null,
     },
+    fromAccountNumber: {
+        type: String,
+        default: null
+    },
+    toAccountNumber: {
+        type: String,
+        default: null
+    },
     transactionType: {
         type: String,
         enum: ["withdraw", "deposit", "transfer"],
