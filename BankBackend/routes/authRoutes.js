@@ -38,15 +38,16 @@ router.post('/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Creating new user
-    const user = new User({ username: username, email: email, password: hashedPassword });
-    await user.save();
-
+    
     // Creating a unique bank account number
     let accountNumber = generateAccountNumber();
     while (await isValidAccNum(accountNumber)) {
         accountNumber = generateAccountNumber();
     }
+
+    // Creating new user
+    const user = new User({ username: username, email: email, password: hashedPassword, accountNumber: accountNumber });
+    await user.save();
 
     const account = new Account({ accountHolder: user._id, accountNumber: accountNumber });
     await account.save();

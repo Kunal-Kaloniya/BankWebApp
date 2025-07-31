@@ -25,6 +25,7 @@ function Login() {
                 username: response.data.user.username,
                 email: response.data.user.email,
                 role: response.data.user.role,
+                accountNumber: response.data.user.accountNumber,
                 createdAt: response.data.user.createdAt
             });
 

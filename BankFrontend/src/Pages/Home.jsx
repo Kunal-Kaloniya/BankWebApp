@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext.jsx";
+import { Link } from "react-router-dom";
 
 function Home() {
 
@@ -14,13 +15,13 @@ function Home() {
                 </p>
                 {
                     isLogged ? (
-                        <a href="/user/dashboard" className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700">
+                        <Link to="/user/dashboard" className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700">
                             View your Account
-                        </a>
+                        </Link>
                     ) : (
-                        <a href="/register" className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700">
+                        <Link to="/register" className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700">
                             Get Started
-                        </a>
+                        </Link>
                     )
                 }
             </section>

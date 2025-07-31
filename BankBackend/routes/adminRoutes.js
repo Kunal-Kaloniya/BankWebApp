@@ -8,14 +8,25 @@ import mongoose from "mongoose";
 const router = express.Router();
 router.use(verifyToken, verifyAdmin);
 
+
+// data fetch
 router.get('/users', async (req, res) => {
     try {
-        const accounts = await User.find();
-        res.status(200).json(accounts);
+        const users = await User.find();
+        res.status(200).json(users);
     } catch (err) {
         res.status(500).json({ message: "Unable to get the accounts" });
     }
 });
+
+router.get('/frozen-accounts', async (req, res) => {
+    try {
+        const frozenAccounts = await Account.find({ isFrozen: true });
+        res.status(200).json(frozenAccounts);
+    } catch (err) {
+        res.status(500).json({ message: "Unable to get frozen accounts" });
+    }
+})
 
 router.get('/accounts', async (req, res) => {
     try {
@@ -26,6 +37,16 @@ router.get('/accounts', async (req, res) => {
     }
 });
 
+
+// calculation
+router.get("/total-balance", async (req, res) => {
+    let balance = 0;
+
+
+})
+
+
+// Actions on accounts
 router.put('/freeze/:accountId', async (req, res) => {
     const { accountId } = req.params;
 

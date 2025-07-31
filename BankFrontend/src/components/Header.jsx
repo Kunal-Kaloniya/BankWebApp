@@ -8,7 +8,7 @@ import { MdOutlineLightMode, MdDarkMode } from "react-icons/md";
 function Header() {
 
     const navigate = useNavigate();
-    const { isLogged, logout } = useContext(AuthContext);
+    const { user, isLogged, logout } = useContext(AuthContext);
     const { theme, toggleTheme } = useContext(ThemeContext);
 
     const handleLogout = () => {
@@ -43,6 +43,15 @@ function Header() {
                                 >
                                     Transaction
                                 </Link>
+
+                                {user?.role === "admin" && (
+                                    <Link
+                                        to='/admin'
+                                        className="focus:text-blue-600 focus:dark:text-blue-500 focus:border-b-1 pb-1"
+                                    >
+                                        Admin
+                                    </Link>
+                                )}
                             </div>
 
                             <div className="flex items-center justify-between gap-2">

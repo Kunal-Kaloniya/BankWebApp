@@ -66,92 +66,101 @@ router.get('/transactions/:accountId', async (req, res) => {
 
 // Routes for transactions
 router.post('/withdraw', async (req, res) => {
-    const { accountId, amount } = req.body;
+    const { accountNumber, amount } = req.body;
+    
+    const intAmount = Number(amount);
 
-    if (!mongoose.Types.ObjectId.isValid(accountId)) return res.status(400).json({ message: "Invalid Id" });
-    if (amount <= 0 || !amount) return res.status(400).json({ message: "Invalid amount." });
+    if (accountNumber.charAt(4) !== '-' && accountNumber.charAt(9) !== '-') {
+        return res.status(400).json({ message: "Invalid Account Number" });
+    }
+    if (intAmount <= 0 || !intAmount) return res.status(400).json({ message: "Invalid amount." });
 
     try {
-        const account = await Account.findById(accountId);
+        const account = await Account.findOne({ accountNumber: accountNumber });
 
         if (!account) return res.status(404).json({ message: "Account Not Found!" });
         if (account.isFrozen) return res.status(500).json({ message: "Account is frozen!" });
 
-        if (account.balance < amount) {
-            await createTransaction(accountId, null, account.accountNumber, null, "withdraw", amount, "failed");
+        if (account.balance < intAmount) {
+            await createTransaction(account._id, null, accountNumber, null, "withdraw", intAmount, "failed");
             return res.status(400).json({ message: "Insufficient Balance!" });
         }
 
-        account.balance -= amount;
+        account.balance -= intAmount;
         await account.save();
 
-        const newTransaction = await createTransaction(accountId, null, account.accountNumber, null, "withdraw", amount, "success");
+        const newTransaction = await createTransaction(account._id, null, accountNumber, null, "withdraw", intAmount, "success");
 
         res.status(201).json({ message: "Amount successfully withdrawn", account, newTransaction });
     } catch (err) {
-        await createTransaction(accountId, null, null, null, "withdraw", amount, "failed");
+        await createTransaction(null, null, accountNumber, null, "withdraw", intAmount, "failed");
         res.status(500).json({ message: "Withdrawal failed!" });
     }
 });
 
 router.post('/deposit', async (req, res) => {
-    const { accountId, amount } = req.body;
+    const { accountNumber, amount } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(accountId)) return res.status(400).json({ message: "Invalid Id" });
-    if (amount <= 0 || !amount) return res.status(400).json({ message: "Invalid amount." });
+    const intAmount = Number(amount);
+
+    if (accountNumber.charAt(4) !== '-' && accountNumber.charAt(9) !== '-') {
+        return res.status(400).json({ message: "Invalid Account Number" });
+    }
+    if (intAmount <= 0 || !intAmount) return res.status(400).json({ message: "Invalid amount." });
 
     try {
-        const account = await Account.findById(accountId);
+        const account = await Account.findOne({ accountNumber: accountNumber });
 
         if (!account) return res.status(404).json({ message: "Account not found!" });
         if (account.isFrozen) return res.status(500).json({ message: "Account is frozen!" });
 
-        account.balance += amount;
+        account.balance += intAmount;
         await account.save();
 
-        const newTransaction = await createTransaction(null, accountId, null, account.accountNumber, "deposit", amount, "success");
+        const newTransaction = await createTransaction(null, account._id, null, accountNumber, "deposit", intAmount, "success");
 
         res.status(201).json({ message: "Amount successfully deposited", account, newTransaction });
     } catch (err) {
-        await createTransaction(null, accountId, null, null, "deposit", amount, "failed");
+        await createTransaction(null, null, null, accountNumber, "deposit", intAmount, "failed");
         res.status(500).json({ message: "Deposit failed!" });
     }
 });
 
 router.post('/transfer', async (req, res) => {
-    const { senderId, receiverId, amount } = req.body;
-
-    if (!mongoose.Types.ObjectId.isValid(senderId) || !mongoose.Types.ObjectId.isValid(receiverId)) {
-        return res.status(400).json({ message: "Invalid Id" });
-    }
+    const { senderAccNum, receiverAccNum, amount } = req.body;
     
-    if (amount <= 0) return res.status(500).json({ message: "Invalid amount!" });
+    const intAmount = Number(amount);
+
+    if ((senderAccNum.charAt(4) !== '-' && senderAccNum.charAt(9) !== '-') || (receiverAccNum.charAt(4) !== '-' && receiverAccNum.charAt(9) !== '-')) {
+        return res.status(400).json({ message: "Invalid Account Number" });
+    }
+
+    if (intAmount <= 0) return res.status(500).json({ message: "Invalid amount!" });
 
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-        const sender = await Account.findById(senderId).session(session);
-        const receiver = await Account.findById(receiverId).session(session);
+        const sender = await Account.findOne({ accountNumber: senderAccNum }).session(session);
+        const receiver = await Account.findOne({ accountNumber: receiverAccNum }).session(session);
 
         if (!sender || !receiver) throw new Error("Account not found!");
         if (sender.isFrozen) throw new Error("Your account is frozen!");
         if (receiver.isFrozen) throw new Error("Receicer's account is frozen!");
-        if (sender.balance < amount) throw new Error("Insufficient Balance...");
+        if (sender.balance < intAmount) throw new Error("Insufficient Balance...");
 
-        sender.balance -= amount;
-        receiver.balance += amount;
+        sender.balance -= intAmount;
+        receiver.balance += intAmount;
 
         await sender.save({ session });
         await receiver.save({ session });
 
-        await createTransaction(senderId, receiverId, sender.accountNumber, receiver.accountNumber, "transfer", amount, "success", session);
+        await createTransaction(sender._id, receiver._id, senderAccNum, receiverAccNum, "transfer", intAmount, "success", session);
 
         await session.commitTransaction();
         session.endSession();
 
         res.status(200).json({ message: "Transfer successfull!" });
-
     } catch (err) {
         await session.abortTransaction();
         session.endSession()
