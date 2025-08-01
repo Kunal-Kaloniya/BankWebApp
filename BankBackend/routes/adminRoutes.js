@@ -30,7 +30,7 @@ router.get('/frozen-accounts', async (req, res) => {
 
 router.get('/accounts', async (req, res) => {
     try {
-        const accounts = await Account.find();
+        const accounts = await Account.find().populate("accountHolder");
         res.status(200).json(accounts);
     } catch (err) {
         res.status(500).json({ message: "Unable to get the accounts" });
@@ -40,9 +40,20 @@ router.get('/accounts', async (req, res) => {
 
 // calculation
 router.get("/total-balance", async (req, res) => {
-    let balance = 0;
+    try {
+        const a = await Account.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalBalance: {$sum: "$balance"}
+                }
+            }
+        ]);
 
-
+        res.status(200).json(a);
+    } catch (err) {
+        res.status(500).json({ message: "Unable to calculate total balance!" });
+    }
 })
 
 

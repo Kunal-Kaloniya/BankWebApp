@@ -32,7 +32,7 @@ connectDB()
         app.use('/auth', authLimiter, authRoutes);
         app.use('/users', userRoutes);
         app.use('/accounts', accountRoutes);
-        app.use('/admin', adminRoutes)
+        app.use('/admin', adminRoutes);
 
         app.get('/', (req, res) => {
             res.send({ message: "Server is running!" });

@@ -6,20 +6,20 @@ import { useLocation } from "react-router-dom";
 function Transaction() {
 
     const { user } = useContext(AuthContext);
-    // const location = useLocation();
+    const location = useLocation();
 
     const [currentOperation, setCurrentOperation] = useState("withdraw");
     const [oneWayData, setOneWayData] = useState({ accountNumber: "", amount: 0 });
     const [twoWayData, setTwoWayData] = useState({ senderAccNum: "", receiverAccNum: "", amount: 0 });
     const [message, setMessage] = useState("");
 
-    // useEffect(() => {
-    //     const receivedOperation = location.state;
+    useEffect(() => {
+        const clicked = location?.state?.clicked || null;
 
-    //     if (receivedOperation.clicked !== null) setCurrentOperation(receivedOperation.clicked);
-    //     else return
+        if (clicked !== null) setCurrentOperation(clicked);
+        else return
 
-    // }, [])
+    }, [])
 
     useEffect(() => {
         const updateSender = () => {

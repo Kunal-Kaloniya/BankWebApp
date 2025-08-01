@@ -105,7 +105,7 @@ function Dashboard() {
             <section className="w-full flex flex-col items-center justify-center py-24 px-20">
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-100">Transaction History</h2>
                 <button
-                    className="px-4 py-2 font-semibold rounded-md border-2 border-orange-500 text-orange-500 hover:text-white hover:bg-orange-500 transition-all"
+                    className="px-4 py-2 font-semibold rounded-md border-2 border-gray-500 text-gray-500 hover:text-white hover:bg-gray-500 transition-all"
                     onClick={fetchTransactions}
                 >
                     Fetch Transactions

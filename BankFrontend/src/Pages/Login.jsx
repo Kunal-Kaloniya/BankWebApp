@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext.jsx";
 
@@ -71,6 +71,10 @@ function Login() {
                     >
                         Login
                     </button>
+
+                    <p className="mt-5">
+                        Not registered yet? <Link to='/register' className="text-blue-400 hover:text-blue-600">Register Now</Link>
+                    </p>
                 </form>
 
                 {
